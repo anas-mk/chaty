@@ -10,12 +10,13 @@ class ChatRepositoryImpl implements ChatRepository {
   ChatRepositoryImpl({required this.remote});
 
   @override
-  Stream<List<Message>> getMessagesStream() {
-    return remote.getMessages().map((list) => list.map((m) => m as Message).toList());
+  Stream<List<Message>> getMessagesStream(String chatId) {
+    return remote.getMessages(chatId)
+        .map((msgs) => msgs.map((m) => m as Message).toList());
   }
 
   @override
-  Future<Either<Failure, void>> sendMessage(Message message) async {
+  Future<Either<Failure, void>> sendMessage(String chatId, Message message) async {
     try {
       final model = MessageModel(
         id: message.id,
@@ -24,10 +25,13 @@ class ChatRepositoryImpl implements ChatRepository {
         text: message.text,
         timestamp: message.timestamp,
       );
-      await remote.sendMessage(model);
+
+      await remote.sendMessage(chatId, model);
       return const Right(null);
     } catch (e) {
       return Left(ServerFailure());
     }
   }
 }
+
+

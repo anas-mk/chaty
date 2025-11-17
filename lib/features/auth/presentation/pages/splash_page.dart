@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_state.dart';
 import 'login_page.dart';
-import '../../../chat/presentation/pages/chat_page.dart';
 
 class SplashPage extends StatelessWidget {
   const SplashPage({super.key});

@@ -18,47 +18,64 @@ import 'features/chat/presentation/bloc/chat_bloc.dart';
 final sl = GetIt.instance;
 
 Future<void> init() async {
-
   // Firebase instances
-  sl.registerLazySingleton<FirebaseAuth>(() => FirebaseAuth.instance);
-  sl.registerLazySingleton<FirebaseFirestore>(() => FirebaseFirestore.instance);
+  if (!sl.isRegistered<FirebaseAuth>()) {
+    sl.registerLazySingleton<FirebaseAuth>(() => FirebaseAuth.instance);
+  }
 
+  if (!sl.isRegistered<FirebaseFirestore>()) {
+    sl.registerLazySingleton<FirebaseFirestore>(() => FirebaseFirestore.instance);
+  }
 
   // Auth
-  sl.registerLazySingleton<AuthRemoteDataSource>(() => AuthRemoteDataSourceImpl(sl()));
-  sl.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(sl()));
+  if (!sl.isRegistered<AuthRemoteDataSource>()) {
+    sl.registerLazySingleton<AuthRemoteDataSource>(() => AuthRemoteDataSourceImpl(sl()));
+  }
 
-  sl.registerLazySingleton(() => Login(sl()));
-  sl.registerLazySingleton(() => Register(sl()));
-  sl.registerLazySingleton(() => Logout(sl()));
+  if (!sl.isRegistered<AuthRepository>()) {
+    sl.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(sl()));
+  }
 
-  sl.registerFactory(() => AuthBloc(
-    loginUsecase: sl(),
-    registerUsecase: sl(),
-    logoutUsecase: sl(),
-    repository: sl(),
-  ));
+  if (!sl.isRegistered<Login>()) {
+    sl.registerLazySingleton(() => Login(sl()));
+  }
 
+  if (!sl.isRegistered<Register>()) {
+    sl.registerLazySingleton(() => Register(sl()));
+  }
 
+  if (!sl.isRegistered<Logout>()) {
+    sl.registerLazySingleton(() => Logout(sl()));
+  }
 
+  if (!sl.isRegistered<AuthBloc>()) {
+    sl.registerFactory(() => AuthBloc(
+      loginUsecase: sl(),
+      registerUsecase: sl(),
+      logoutUsecase: sl(),
+      repository: sl(),
+    ));
+  }
 
+  // Chat
+  if (!sl.isRegistered<ChatRemoteDataSource>()) {
+    sl.registerLazySingleton<ChatRemoteDataSource>(() => ChatRemoteDataSourceImpl(firestore: sl()));
+  }
 
-  // Data sources
-  sl.registerLazySingleton<ChatRemoteDataSource>(() => ChatRemoteDataSourceImpl(firestore: sl()));
+  if (!sl.isRegistered<ChatRepository>()) {
+    sl.registerLazySingleton<ChatRepository>(() => ChatRepositoryImpl(remote: sl()));
+  }
 
-  // Repositories
-  sl.registerLazySingleton<ChatRepository>(() => ChatRepositoryImpl(remote: sl()));
+  if (!sl.isRegistered<GetMessagesStream>()) {
+    sl.registerLazySingleton(() => GetMessagesStream(sl()));
+  }
 
-  // Usecases
-  sl.registerLazySingleton(() => GetMessagesStream(sl()));
-  sl.registerLazySingleton(() => SendMessage(sl()));
+  if (!sl.isRegistered<SendMessage>()) {
+    sl.registerLazySingleton(() => SendMessage(sl()));
+  }
 
-  // Bloc
-  sl.registerFactory(() => ChatBloc(getMessagesStream: sl(), sendMessage: sl()));
-
-
-
-
-
-
+  if (!sl.isRegistered<ChatBloc>()) {
+    sl.registerFactory(() => ChatBloc(getMessagesStream: sl(), sendMessage: sl()));
+  }
 }
+

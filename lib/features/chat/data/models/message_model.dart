@@ -1,4 +1,5 @@
 import '../../domain/entities/message.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MessageModel extends Message {
   const MessageModel({
@@ -16,21 +17,31 @@ class MessageModel extends Message {
   );
 
   factory MessageModel.fromMap(Map<String, dynamic> map, String id) {
+    DateTime ts;
+    final raw = map['timestamp'];
+    if (raw is Timestamp) {
+      ts = raw.toDate();
+    } else if (raw is DateTime) {
+      ts = raw;
+    } else {
+      ts = DateTime.now();
+    }
+
     return MessageModel(
       id: id,
-      senderId: map['senderId'] as String,
-      senderName: map['senderName'] as String,
-      text: map['text'] as String,
-      timestamp: (map['timestamp'] as dynamic)?.toDate() as DateTime? ?? DateTime.now(),
+      senderId: map['senderId'] as String? ?? '',
+      senderName: map['senderName'] as String? ?? '',
+      text: map['text'] as String? ?? '',
+      timestamp: ts,
     );
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toMapForSend() {
     return {
       'senderId': senderId,
       'senderName': senderName,
       'text': text,
-      'timestamp': timestamp,
+      'timestamp': FieldValue.serverTimestamp(),
     };
   }
 }

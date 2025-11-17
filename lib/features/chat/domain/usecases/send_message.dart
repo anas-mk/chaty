@@ -7,7 +7,8 @@ class SendMessage {
   final ChatRepository repository;
   SendMessage(this.repository);
 
-  Future<Either<Failure, void>> call(Message message) {
-    return repository.sendMessage(message);
+  Future<Either<Failure, void>> call(String chatId, Message message) {
+    return repository.sendMessage(chatId, message); // Message فقط
   }
 }
+

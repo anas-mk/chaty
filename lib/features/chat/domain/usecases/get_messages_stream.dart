@@ -5,7 +5,8 @@ class GetMessagesStream {
   final ChatRepository repository;
   GetMessagesStream(this.repository);
 
-  Stream<List<Message>> call() {
-    return repository.getMessagesStream();
+  Stream<List<Message>> call(String chatId) {
+    return repository.getMessagesStream(chatId);
   }
 }
+
